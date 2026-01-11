@@ -1,0 +1,67 @@
+# Sample HTTP POST Logs from Tuya T5AI Chatbot
+# These are examples of the JSON payloads the device sends to localhost:8080/chatbot
+#
+# Event Types:
+#   - user_speech: What the user said (from ASR)
+#   - ai_response: AI's text response (streamed in chunks)
+#   - ai_emotion: Emotion detected/expressed (e.g., happy, neutral, sad)
+
+# === Session Example 1 ===
+# User wakes up device with "Ni Hao Tuya" and asks a question
+
+[14:32:01] POST /chatbot
+{"event":"user_speech","message":"Hello, what's the weather like today?"}
+
+[14:32:02] POST /chatbot
+{"event":"ai_emotion","message":"happy"}
+
+[14:32:02] POST /chatbot
+{"event":"ai_response","message":"Hello! I'd be happy to help you with the weather. "}
+
+[14:32:03] POST /chatbot
+{"event":"ai_response","message":"However, I don't have access to real-time weather data. "}
+
+[14:32:03] POST /chatbot
+{"event":"ai_response","message":"You can check your local weather app or website for accurate information."}
+
+# === Session Example 2 ===
+# User asks about time
+
+[14:33:15] POST /chatbot
+{"event":"user_speech","message":"What time is it?"}
+
+[14:33:15] POST /chatbot
+{"event":"ai_emotion","message":"neutral"}
+
+[14:33:16] POST /chatbot
+{"event":"ai_response","message":"I don't have access to the current time. "}
+
+[14:33:16] POST /chatbot
+{"event":"ai_response","message":"Please check your phone or a clock for the accurate time."}
+
+# === Session Example 3 ===
+# User says goodbye
+
+[14:35:42] POST /chatbot
+{"event":"user_speech","message":"Goodbye, thank you!"}
+
+[14:35:42] POST /chatbot
+{"event":"ai_emotion","message":"happy"}
+
+[14:35:43] POST /chatbot
+{"event":"ai_response","message":"Goodbye! Have a great day!"}
+
+# === Notes for Frontend Development ===
+#
+# 1. AI responses are streamed in chunks - you'll receive multiple ai_response
+#    events for a single reply. Concatenate them or display progressively.
+#
+# 2. The emotion event typically comes before or at the start of AI response.
+#    Common emotions: happy, neutral, sad, surprised, angry, thinking
+#
+# 3. user_speech arrives as a single complete message after ASR processing.
+#
+# 4. All messages are UTF-8 encoded. Chinese input is also supported:
+#    {"event":"user_speech","message":"你好，今天天气怎么样？"}
+#
+# 5. Server should respond with: {"status":"ok"} (HTTP 200)

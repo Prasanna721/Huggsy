@@ -36,6 +36,12 @@
 #endif
 
 #include "app_mcp.h"
+#include "http_client_interface.h"
+
+// Local server configuration for message forwarding
+#define LOCAL_SERVER_HOST "192.168.34.223"
+#define LOCAL_SERVER_PORT 8080
+#define LOCAL_SERVER_PATH "/api/chatbot"
 
 #if (defined(ENABLE_CHAT_DISPLAY2) && (ENABLE_CHAT_DISPLAY2 == 1))
 #include "lang_config.h"
@@ -154,6 +160,58 @@ static TDL_BUTTON_HANDLE sg_button_hdl = NULL;
 /***********************************************************
 ***********************function define**********************
 ***********************************************************/
+
+/**
+ * @brief Send message to local server via HTTP POST
+ * @param event_type Event type string (user_speech, ai_response, ai_emotion)
+ * @param message The message content
+ * @param msg_len Length of the message
+ */
+static void __send_to_local_server(const char *event_type, const uint8_t *message, uint32_t msg_len)
+{
+    if (msg_len == 0 || message == NULL) {
+        return;
+    }
+
+    // Build JSON body - escape message for JSON
+    char json_body[1024];
+    int json_len = snprintf(json_body, sizeof(json_body),
+                            "{\"event\":\"%s\",\"message\":\"%.*s\"}",
+                            event_type, (int)msg_len, message);
+
+    if (json_len <= 0 || json_len >= sizeof(json_body)) {
+        PR_WARN("HTTP POST: JSON body too large");
+        return;
+    }
+
+    PR_NOTICE("HTTP POST [%s]: %.*s", event_type, (int)msg_len, message);
+
+    http_client_header_t headers[] = {
+        {.key = "Content-Type", .value = "application/json"},
+    };
+
+    http_client_response_t response = {0};
+    http_client_status_t status = http_client_request(
+        &(const http_client_request_t){
+            .host = LOCAL_SERVER_HOST,
+            .port = LOCAL_SERVER_PORT,
+            .method = "POST",
+            .path = LOCAL_SERVER_PATH,
+            .headers = headers,
+            .headers_count = 1,
+            .body = (uint8_t *)json_body,
+            .body_length = json_len,
+            .timeout_ms = 3000
+        },
+        &response);
+
+    if (status != HTTP_CLIENT_SUCCESS) {
+        PR_DEBUG("HTTP POST failed: %d (server may be offline)", status);
+    }
+
+    http_client_free(&response);
+}
+
 static void __app_ai_audio_evt_inform_cb(AI_AUDIO_EVENT_E event, uint8_t *data, uint32_t len, void *arg)
 {
 #if (defined(ENABLE_CHAT_DISPLAY) && (ENABLE_CHAT_DISPLAY == 1)) || (defined(ENABLE_CHAT_DISPLAY2) && (ENABLE_CHAT_DISPLAY2 == 1))
@@ -173,6 +231,8 @@ static void __app_ai_audio_evt_inform_cb(AI_AUDIO_EVENT_E event, uint8_t *data, 
             // Ubuntu console logging
             PR_NOTICE("USER: %.*s", (int)len, data);
 #endif
+            // Send user speech to local server
+            __send_to_local_server("user_speech", data, len);
         }
     } break;
     case AI_AUDIO_EVT_AI_REPLIES_TEXT_START: {
@@ -219,6 +279,10 @@ static void __app_ai_audio_evt_inform_cb(AI_AUDIO_EVENT_E event, uint8_t *data, 
 #else
         PR_NOTICE("AI: %.*s", len, data);
 #endif
+        // Send AI response to local server
+        if (len > 0 && data) {
+            __send_to_local_server("ai_response", data, len);
+        }
     } break;
     case AI_AUDIO_EVT_AI_REPLIES_TEXT_END: {
 #if (defined(ENABLE_CHAT_DISPLAY) && (ENABLE_CHAT_DISPLAY == 1)) || (defined(ENABLE_CHAT_DISPLAY2) && (ENABLE_CHAT_DISPLAY2 == 1))
@@ -247,6 +311,8 @@ static void __app_ai_audio_evt_inform_cb(AI_AUDIO_EVENT_E event, uint8_t *data, 
 #if (defined(ENABLE_CHAT_DISPLAY) && (ENABLE_CHAT_DISPLAY == 1)) || (defined(ENABLE_CHAT_DISPLAY2) && (ENABLE_CHAT_DISPLAY2 == 1))
                 app_display_send_msg(TY_DISPLAY_TP_EMOTION, (uint8_t *)emo->name, strlen(emo->name));
 #endif
+                // Send emotion to local server
+                __send_to_local_server("ai_emotion", (uint8_t *)emo->name, strlen(emo->name));
             }
 
             if (emo->text) {
