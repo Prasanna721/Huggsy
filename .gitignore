@@ -1,0 +1,60 @@
+# Build directories
+.build/
+build/
+cmake-build-*/
+dist/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+obj/
+out/
+bin/
+
+# Dependencies
+server/venv/
+venv/
+env/
+.venv/
+.env
+site-packages/
+node_modules/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeUserPresets.json
+cmake_install.cmake
+Makefile
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+*.pyc
+
+# Generated files
+app_default.config
+*.config
+xplan/
+
+# Logs
+*.log
+monitor.log
+
+# Temporary files
+*.tmp
+.git_bkp/
