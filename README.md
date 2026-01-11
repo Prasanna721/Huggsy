@@ -1,33 +1,33 @@
-English | [简体中文](./RAEDME_zh.md)
+# Huggsy
 
-# your_chat_bot
-[your_chat_bot](https://github.com/tuya/TuyaOpen/tree/master/apps/tuya.ai/your_chat_bot) is an open-source large model intelligent chatbot based on tuya.ai. It collects voice through a microphone, performs speech recognition, and enables conversation, interaction, and banter. You can also see real-time chat content on the screen.
+**An AI companion for the most critical years of human development.**
 
-**Note: Switching between TUYA AI V1.0 and V2.0 requires removing the device and clearing the data on the APP before use.**
+## The Problem
 
-## Supported Features
+Children aged 1-6 are in their peak neuroplasticity window—their brains are forming 1 million neural connections per second. Yet most parents are overwhelmed, screens are passive, and quality early education is expensive and inaccessible.
 
-1. AI intelligent conversation
-2. Button wake-up/Voice wake-up, turn-based dialogue, supports voice interruption (hardware support required)
-3. Expression display
-4. Supports LCD for displaying real-time chat content and supports viewing chat content in real-time on the APP side
-5. Quick Bluetooth network connection to the router
-6. Real-time switching of AI entity roles on the APP side
+## The Solution
 
+Huggsy is a voice-first AI companion that engages children through natural conversation, storytelling, and play. It adapts to each child's pace, interests, and developmental stage—delivering personalized learning that was previously only possible with dedicated human attention.
 
-![](../../../docs/images/apps/your_chat_bot.png)
+## Why Now
 
-## Hardware Dependencies
-1. Audio capture
-2. Audio playback
+- **AI is ready**: Large language models can now hold natural, safe, age-appropriate conversations
+- **Hardware is cheap**: Voice-enabled devices cost under $30 to manufacture
+- **Parents need help**: Dual-income households have less time but want more for their kids
+- **The window is small**: 90% of brain development happens before age 5
 
-## Supported Hardware
-| Model | Description | Reset Method |
-| --- | --- | --- |
-| TUYA T5AI_Board Development Board | [https://developer.tuya.com/en/docs/iot-device-dev/T5-E1-IPEX-development-board?id=Ke9xehig1cabj](https://developer.tuya.com/en/docs/iot-device-dev/T5-E1-IPEX-development-board?id=Ke9xehig1cabj) | Reset by restarting 3 times |
-| TUYA T5AI_EVB Board | [https://oshwhub.com/flyingcys/t5ai_evb](https://oshwhub.com/flyingcys/t5ai_evb) | Reset by restarting 3 times |
+## What Huggsy Does
 
-## Compilation
-1. Run the `tos config_choice` command to select the current development board in use.
-2. If you need to modify the configuration, run the `tos menuconfig` command to make changes.
-3. Run the `tos build` command to compile the project.
+- Talks, listens, and remembers
+- Teaches letters, numbers, colors, and social skills through play
+- Adapts to bedtime routines, moods, and learning pace
+- Gives parents visibility without surveillance
+
+## The Vision
+
+Every child deserves a patient, knowledgeable, always-available learning companion. Huggsy makes that possible.
+
+---
+
+*Built for the humans who are just getting started.*
